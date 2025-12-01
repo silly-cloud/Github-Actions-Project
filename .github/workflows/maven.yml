@@ -48,12 +48,12 @@ jobs:
 
       - name: Install gitleaks (binary)
         run: |
+          set -e
           ARCH=$(uname -m)
           if [[ "$ARCH" == "x86_64" || "$ARCH" == "amd64" ]]; then BIN="gitleaks-linux-amd64"; fi
           if [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then BIN="gitleaks-linux-arm64"; fi
-          curl -sSL "https://github.com/zricethezav/gitleaks/releases/latest/download/${BIN}" -o gitleaks
-          chmod +x gitleaks
-          sudo mv gitleaks /usr/local/bin/gitleaks
-
+          curl -fSL "https://github.com/zricethezav/gitleaks/releases/latest/download/${BIN}" -o /tmp/gitleaks
+          sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
+      
       - name: Gitleaks Code Scan
-        run: gitleaks detect source . -r gitleaks-report.json -f json
+        run: /usr/local/bin/gitleaks detect source . -r gitleaks-report.json -f json
